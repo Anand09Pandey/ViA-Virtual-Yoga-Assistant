@@ -25,9 +25,9 @@ function App() {
     const net = await posenet.load({
       architecture: 'MobileNetV1',
       outputStride: 16,
-      inputResolution: { width: 650, height: 650},
-      multiplier: 0.75,
-      // scale: 1.0,
+      inputResolution: { width: 560, height: 420},
+      multiplier: 1.0,
+      scale: 1.0,
       quantBytes: 4,
     });
     //
@@ -47,8 +47,8 @@ function App() {
       const videoWidth = webcamRef.current.video.videoWidth;
       const videoHeight = webcamRef.current.video.videoHeight;
       const image = document.getElementById('girl');
-      // const imageWidth = 500;
-      // const imageHeight = 500;
+      const imageWidth = 560;
+      const imageHeight = 420;
 
       // Set video width
       webcamRef.current.video.width = videoWidth;
@@ -96,22 +96,37 @@ function App() {
         leftLeg: 1,
         rightLeg: 1
       }
-
-      if (posei.keypoints[5].score<0.5 || posev.keypoints[5].score<0.5 || posei.keypoints[7].score<0.5 || posev.keypoints[7].score<0.5 || Math.abs(lsi - lsv) < 15) output.leftArm = 1;
+      //LEFT ARM
+      if (posei.keypoints[5].score < 0.7 || posev.keypoints[5].score < 0.3 ||
+        posei.keypoints[7].score < 0.7 || posev.keypoints[7].score < 0.3 || Math.abs(lsi - lsv) < 5) output.leftArm = 1;
       else output.leftArm = 0;
-      if (posei.keypoints[7].score<0.5 || posev.keypoints[7].score<0.5 || posei.keypoints[9].score<0.5 || posev.keypoints[9].score<0.5 || Math.abs(lwi - lwv) < 15) output.leftWrist = 1;
+      //LEFT FOREARM
+      if (posei.keypoints[7].score < 0.7 || posev.keypoints[7].score < 0.3 ||
+        posei.keypoints[9].score < 0.7 || posev.keypoints[9].score < 0.7 || Math.abs(lwi - lwv) < 10) output.leftWrist = 1;
       else output.leftWrist = 0;
-      if (posei.keypoints[6].score<0.5 || posev.keypoints[6].score<0.5 || posei.keypoints[8].score<0.5 || posev.keypoints[8].score<0.5 || Math.abs(rsi - rsv) < 15) output.rightArm = 1;
+      //RIGHT ARM
+      if (posei.keypoints[6].score < 0.7 || posev.keypoints[6].score < 0.3 ||
+        posei.keypoints[8].score < 0.7 || posev.keypoints[8].score < 0.3 || Math.abs(rsi - rsv) < 5) output.rightArm = 1;
       else output.rightArm = 0;
-      if (posei.keypoints[8].score<0.5 || posev.keypoints[8].score<0.5 || posei.keypoints[10].score<0.5 || posev.keypoints[10].score<0.5 || Math.abs(rwi - rwv) < 15) output.rightWrist = 1;
+      //RIGHT FOREARM
+      if (posei.keypoints[8].score < 0.7 || posev.keypoints[8].score < 0.3 ||
+        posei.keypoints[10].score < 0.7 || posev.keypoints[10].score < 0.7 || Math.abs(rwi - rwv) < 10) output.rightWrist = 1;
       else output.rightWrist = 0;
-      if (posei.keypoints[11].score<0.5 || posev.keypoints[11].score<0.5 || posei.keypoints[13].score<0.5 || posev.keypoints[13].score<0.5 || Math.abs(lhi - lhv) < 15) output.leftThigh = 1;
+      //LEFT THIGH
+      if (posei.keypoints[11].score < 0.7 || posev.keypoints[11].score < 0.5 ||
+        posei.keypoints[13].score < 0.7 || posev.keypoints[13].score < 0.5 || Math.abs(lhi - lhv) < 5) output.leftThigh = 1;
       else output.leftThigh = 0;
-      if (posei.keypoints[13].score<0.5 || posev.keypoints[13].score<0.5 || posei.keypoints[15].score<0.5 || posev.keypoints[15].score<0.5 || Math.abs(lai - lav) < 15) output.leftLeg = 1;
+      //LEFT LEG
+      if (posei.keypoints[13].score < 0.7 || posev.keypoints[13].score < 0.5 ||
+        posei.keypoints[15].score < 0.7 || posev.keypoints[15].score < 0.7 || Math.abs(lai - lav) < 20) output.leftLeg = 1;
       else output.leftLeg = 0;
-      if (posei.keypoints[12].score<0.5 || posev.keypoints[12].score<0.5 || posei.keypoints[14].score<0.5 || posev.keypoints[14].score<0.5 || Math.abs(rhi - rhv) < 15) output.rightThigh = 1;
+      //RIGHT THIGH
+      if (posei.keypoints[12].score < 0.7 || posev.keypoints[12].score < 0.5 ||
+        posei.keypoints[14].score < 0.7 || posev.keypoints[14].score < 0.5 || Math.abs(rhi - rhv) < 5) output.rightThigh = 1;
       else output.rightThigh = 0;
-      if (posei.keypoints[14].score<0.5 || posev.keypoints[14].score<0.5 || posei.keypoints[16].score<0.5 || posev.keypoints[16].score<0.5 || Math.abs(rai - rav) < 15) output.rightLeg = 1;
+      //RIGHT LEG
+      if (posei.keypoints[14].score < 0.7 || posev.keypoints[14].score < 0.5 ||
+        posei.keypoints[16].score < 0.7 || posev.keypoints[16].score < 0.7 || Math.abs(rai - rav) < 20) output.rightLeg = 1;
       else output.rightLeg = 0;
 
 
@@ -131,7 +146,7 @@ function App() {
 
       let flag = 0;
       if (posei.score < 0.5) flag = 1;
-      else if (posev.score < 0.5) flag = 2;
+      else if (posev.score < 0.8) flag = 2;
 
 
       drawCanvas(posev, video, videoWidth, videoHeight, canvasRef);
@@ -218,8 +233,8 @@ function App() {
     canvas.current.width = videoWidth;
     canvas.current.height = videoHeight;
 
-    drawKeypoints(pose["keypoints"], 0.6, ctx);
-    drawSkeleton(pose["keypoints"], 0.7, ctx);
+    drawKeypoints(pose["keypoints"], 0.8, ctx);
+    drawSkeleton(pose["keypoints"], 0.9, ctx);
   };
 
   runPosenet();
@@ -271,7 +286,7 @@ function App() {
         <img id="tick" style={{height: 150, width: 150, border: 'none', margin: "auto"}}></img>
       </div>
       <div style={{display: "flex"}}>
-        <img id='girl' style={{ width: 560, height: 420, zindex: 9 }} src={require('./images/handraise.jpg')} alt='Image not loaded'></img>
+        <img id='girl' style={{ width: 560, height: 420, zindex: 9 }} src={require('./images/DATASET/TRAIN/goddess/00000258.jpg')} alt='Image not loaded'></img>
         {/* <canvas
           ref={canvasRef}
           style={{
@@ -280,9 +295,9 @@ function App() {
             left: 0,
             right: 0,
             textAlign: "center",
-            zindex: 9,
-            width: 500,
-            height: 500,
+            zindex: 10,
+            width: 560,
+            height: 420,
           }}
         /> */}
       </div>
