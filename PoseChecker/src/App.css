@@ -1,7 +1,9 @@
 .App {
   /* text-align: center; */
-  background-color: #282c34;
-  min-height: 100vh;
+  margin-top: 5%;
+  margin-bottom: 0;
+  background-color: rgb(85, 84, 84);
+  min-height: fit-content;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;

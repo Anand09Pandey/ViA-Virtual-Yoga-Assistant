@@ -1,0 +1,14 @@
+*{
+    text-align: center;
+}
+
+.cardsSection{
+    background-color: rgb(85, 84, 84);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    padding: 1%;
+    /* padding-top: 2%;
+    padding-bottom: 2%; */
+}

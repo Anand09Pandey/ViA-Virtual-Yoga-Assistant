@@ -8,6 +8,7 @@
 // 8. Draw functions DONE
 
 import React, { useRef } from "react";
+import { useParams } from 'react-router-dom';
 import "./App.css";
 import * as tf from "@tensorflow/tfjs";
 import * as posenet from "@tensorflow-models/posenet";
@@ -18,6 +19,9 @@ import { abs } from "@tensorflow/tfjs";
 function App() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
+  const { title, image } = useParams();
+  const imagesFolder = require.context('./images', true);
+  let yoga = imagesFolder(`./${image}`);
   // var pose;
 
   //  Load posenet
@@ -98,35 +102,35 @@ function App() {
       }
       //LEFT ARM
       if (posei.keypoints[5].score < 0.7 || posev.keypoints[5].score < 0.3 ||
-        posei.keypoints[7].score < 0.7 || posev.keypoints[7].score < 0.3 || Math.abs(lsi - lsv) < 5) output.leftArm = 1;
+        posei.keypoints[7].score < 0.7 || posev.keypoints[7].score < 0.3 || Math.abs(lsi - lsv) < 2) output.leftArm = 1;
       else output.leftArm = 0;
       //LEFT FOREARM
       if (posei.keypoints[7].score < 0.7 || posev.keypoints[7].score < 0.3 ||
-        posei.keypoints[9].score < 0.7 || posev.keypoints[9].score < 0.7 || Math.abs(lwi - lwv) < 10) output.leftWrist = 1;
+        posei.keypoints[9].score < 0.7 || posev.keypoints[9].score < 0.7 || Math.abs(lwi - lwv) < 2) output.leftWrist = 1;
       else output.leftWrist = 0;
       //RIGHT ARM
       if (posei.keypoints[6].score < 0.7 || posev.keypoints[6].score < 0.3 ||
-        posei.keypoints[8].score < 0.7 || posev.keypoints[8].score < 0.3 || Math.abs(rsi - rsv) < 5) output.rightArm = 1;
+        posei.keypoints[8].score < 0.7 || posev.keypoints[8].score < 0.3 || Math.abs(rsi - rsv) < 2) output.rightArm = 1;
       else output.rightArm = 0;
       //RIGHT FOREARM
       if (posei.keypoints[8].score < 0.7 || posev.keypoints[8].score < 0.3 ||
-        posei.keypoints[10].score < 0.7 || posev.keypoints[10].score < 0.7 || Math.abs(rwi - rwv) < 10) output.rightWrist = 1;
+        posei.keypoints[10].score < 0.7 || posev.keypoints[10].score < 0.7 || Math.abs(rwi - rwv) < 2) output.rightWrist = 1;
       else output.rightWrist = 0;
       //LEFT THIGH
-      if (posei.keypoints[11].score < 0.7 || posev.keypoints[11].score < 0.5 ||
-        posei.keypoints[13].score < 0.7 || posev.keypoints[13].score < 0.5 || Math.abs(lhi - lhv) < 5) output.leftThigh = 1;
+      if (posei.keypoints[11].score < 0.8 || posev.keypoints[11].score < 0.8 ||
+        posei.keypoints[13].score < 0.8 || posev.keypoints[13].score < 0.8 || Math.abs(lhi - lhv) < 20) output.leftThigh = 1;
       else output.leftThigh = 0;
       //LEFT LEG
-      if (posei.keypoints[13].score < 0.7 || posev.keypoints[13].score < 0.5 ||
-        posei.keypoints[15].score < 0.7 || posev.keypoints[15].score < 0.7 || Math.abs(lai - lav) < 20) output.leftLeg = 1;
+      if (posei.keypoints[13].score < 0.8 || posev.keypoints[13].score < 0.8 ||
+        posei.keypoints[15].score < 0.8 || posev.keypoints[15].score < 0.8 || Math.abs(lai - lav) < 20) output.leftLeg = 1;
       else output.leftLeg = 0;
       //RIGHT THIGH
-      if (posei.keypoints[12].score < 0.7 || posev.keypoints[12].score < 0.5 ||
-        posei.keypoints[14].score < 0.7 || posev.keypoints[14].score < 0.5 || Math.abs(rhi - rhv) < 5) output.rightThigh = 1;
+      if (posei.keypoints[12].score < 0.8 || posev.keypoints[12].score < 0.8 ||
+        posei.keypoints[14].score < 0.8 || posev.keypoints[14].score < 0.8 || Math.abs(rhi - rhv) < 20) output.rightThigh = 1;
       else output.rightThigh = 0;
-      //RIGHT LEG
-      if (posei.keypoints[14].score < 0.7 || posev.keypoints[14].score < 0.5 ||
-        posei.keypoints[16].score < 0.7 || posev.keypoints[16].score < 0.7 || Math.abs(rai - rav) < 20) output.rightLeg = 1;
+      //RIGHT LE2
+      if (posei.keypoints[14].score < 0.8 || posev.keypoints[14].score < 0.8 ||
+        posei.keypoints[16].score < 0.8 || posev.keypoints[16].score < 0.8 || Math.abs(rai - rav) < 20) output.rightLeg = 1;
       else output.rightLeg = 0;
 
 
@@ -146,7 +150,7 @@ function App() {
 
       let flag = 0;
       if (posei.score < 0.5) flag = 1;
-      else if (posev.score < 0.8) flag = 2;
+      else if (posev.score < 0.7) flag = 2;
 
 
       drawCanvas(posev, video, videoWidth, videoHeight, canvasRef);
@@ -214,6 +218,10 @@ function App() {
     }
     
     if (flag != 0) {
+      let myNode = document.getElementById("list");
+      while (myNode.firstChild) {
+        myNode.removeChild(myNode.lastChild);
+      }
       if (flag == 1) document.getElementById('text').innerHTML = "Image not clear";
       if (flag == 2) document.getElementById('text').innerHTML = "Video not clear";
       document.getElementById('tick').src = require('./images/cross.png');
@@ -224,7 +232,7 @@ function App() {
     }
     else {
       document.getElementById('text').innerHTML = "Adjust the Position of:";
-      document.getElementById('tick').src = "";
+      document.getElementById('tick').src = require('./images/loading.svg');
     } 
   };
 
@@ -233,45 +241,49 @@ function App() {
     canvas.current.width = videoWidth;
     canvas.current.height = videoHeight;
 
-    drawKeypoints(pose["keypoints"], 0.8, ctx);
-    drawSkeleton(pose["keypoints"], 0.9, ctx);
+    drawKeypoints(pose["keypoints"], 0.6, ctx);
+    drawSkeleton(pose["keypoints"], 0.8, ctx);
   };
 
   runPosenet();
 
   return (
     <div className="App">
-      <div className="App-header">
-        <Webcam
-          ref={webcamRef}
-          style={{
-            position: "absolute",
-            // marginLeft: "auto",
-            // marginRight: "auto",
-            left: 0,
-            right: 0,
-            textAlign: "center",
-            zindex: 9,
-            width: 560,
-            height: 420,
-          }}
-        />
+      <div>
+        <h3>Your Posture</h3>
+        <div className="App-header">
+          <Webcam
+            ref={webcamRef}
+            style={{
+              position: "absolute",
+              // marginLeft: "auto",
+              // marginRight: "auto",
+              left: 0,
+              right: 0,
+              textAlign: "center",
+              zindex: 9,
+              width: 560,
+              height: 420,
+            }}
+          />
 
-        <canvas
-          ref={canvasRef}
-          style={{
-            position: "absolute",
-            // marginLeft: "auto",
-            // marginRight: "auto",
-            left: 0,
-            right: 0,
-            textAlign: "center",
-            zindex: 9,
-            width: 560,
-            height: 420,
-          }}
-        />
+          <canvas
+            ref={canvasRef}
+            style={{
+              position: "absolute",
+              // marginLeft: "auto",
+              // marginRight: "auto",
+              left: 0,
+              right: 0,
+              textAlign: "center",
+              zindex: 9,
+              width: 560,
+              height: 420,
+            }}
+          />
+        </div>
       </div>
+      
       <div id="block" style={{
         display: "flex",
         flexFlow: "column wrap",
@@ -285,8 +297,11 @@ function App() {
         <ol style={{textAlign: "left", margin: "auto"}} id="list"></ol>
         <img id="tick" style={{height: 150, width: 150, border: 'none', margin: "auto"}}></img>
       </div>
-      <div style={{display: "flex"}}>
-        <img id='girl' style={{ width: 560, height: 420, zindex: 9 }} src={require('./images/DATASET/TRAIN/goddess/00000258.jpg')} alt='Image not loaded'></img>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        {console.log(title)}
+        {console.log(image)}
+        <h3>{title}</h3>
+        <img id='girl' style={{ width: 560, height: 420, zindex: 9 }} src={yoga} alt='Image not loaded'></img>
         {/* <canvas
           ref={canvasRef}
           style={{
