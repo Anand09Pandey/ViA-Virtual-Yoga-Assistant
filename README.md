@@ -7,4 +7,4 @@ Steps to Run the application:
 3. Rum npm install in the console inside application folder.
 4. You will see a Home Page.
 5. Click on Learn More to learn about any Yoga.
-6. Click on Practice to learn the correct posture of the Yoga.
+6. Click on Practice to exercise the Yoga in its correct posture.
